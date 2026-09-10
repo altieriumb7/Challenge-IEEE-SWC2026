@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Smart City Digital Twin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reset.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/black.min.css">
+    <style>
+        .reveal h1, .reveal h2, .reveal h3 {
+            text-transform: none;
+            font-weight: 700;
+        }
+        .highlight {
+            color: #00ffcc;
+        }
+        .reveal ul {
+            list-style-type: square;
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- SLIDE 1 -->
+            <section>
+                <h2>SMART CITY <span class="highlight">DIGITAL TWIN</span></h2>
+                <p>Ethical Traffic Optimization via Graph Neural Networks</p>
+                <br>
+                <small>IEEE SWC 2026 Hackathon</small>
+            </section>
+
+            <!-- SLIDE 2 -->
+            <section>
+                <h2>BEYOND <span class="highlight">SPEED</span>.</h2>
+                <p>Modern algorithms optimize for throughput. <br>They ignore <strong>ethics</strong>.</p>
+                <ul>
+                    <li>Trucks pass schools.</li>
+                    <li>Buses stuck in gridlock.</li>
+                    <li>Poor zones take the burden.</li>
+                </ul>
+            </section>
+
+            <!-- SLIDE 3 -->
+            <section>
+                <h2>A <span class="highlight">FAIRNESS</span> ENGINE</h2>
+                <p>We built a macroscopic 3D twin bounded by three laws:</p>
+                <ol>
+                    <li>🌿 <strong>Environmental Justice</strong> (Protect Vulnerable Nodes)</li>
+                    <li>🚌 <strong>Modal Equality</strong> (Prioritize Public Transit)</li>
+                    <li>🗺️ <strong>Spatial Equity</strong> (Balance V/C Ratios)</li>
+                </ol>
+            </section>
+
+            <!-- SLIDE 4 -->
+            <section>
+                <h2>THE <span class="highlight">"EYE OF GOD"</span></h2>
+                <p>Modeling the city as a 100-Node Planar Graph</p>
+                <p style="font-size: 0.9em; margin-bottom: 10px;">12 Live Features $\times$ 100 Nodes = $\mathbb{R}^{1200}$ Tensor</p>
+                <p>The AI sees everything simultaneously:</p>
+                <ul>
+                    <li>Ambulances</li>
+                    <li>Live Emissions</li>
+                    <li>Queue Lengths</li>
+                </ul>
+            </section>
+
+            <!-- SLIDE 5 -->
+            <section>
+                <h2>SPATIAL <span class="highlight">CONVOLUTION</span></h2>
+                <p>$$ H^{(l+1)} = \text{ReLU}\left( \hat{A} H^{(l)} W^{(l)} \right) $$</p>
+                <p style="font-size: 0.8em;">Traffic data diffuses across the city through <strong>two layers of Message Passing</strong>.</p>
+                <p style="font-size: 0.8em;">The Actor maps this into a continuous action space for autonomous routing.</p>
+            </section>
+
+            <!-- SLIDE 6 -->
+            <section>
+                <h2>MACROSCOPIC <span class="highlight">DIVERSION</span></h2>
+                <p>How traffic actually moves in our engine:</p>
+                <ul>
+                    <li><strong>Water-Filling:</strong> Flows via Volume/Capacity gradients.</li>
+                    <li><strong>Repulsion:</strong> Negative pressure on Schools/Hospitals.</li>
+                    <li><strong>Conservation of Mass:</strong> Vehicles aren't deleted; they trigger exponential Webster delays elsewhere.</li>
+                </ul>
+            </section>
+
+            <!-- SLIDE 7 -->
+            <section>
+                <h3 style="font-style: italic;">"The technology to move cars efficiently already exists. We built the technology to move society <span class="highlight">fairly</span>."</h3>
+                <br>
+                <p>Thank you.</p>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/math/math.min.js"></script>
+    <script>
+        Reveal.initialize({
+            controls: true,
+            progress: true,
+            center: true,
+            hash: true,
+            transition: 'slide',
+            plugins: [ RevealMath.KaTeX ]
+        });
+    </script>
+</body>
+</html>

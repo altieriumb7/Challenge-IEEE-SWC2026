@@ -69,7 +69,7 @@ st.sidebar.divider()
 st.sidebar.subheader("🚦 Simulation Engine Mode")
 sim_mode = st.sidebar.radio(
     "Choose how the city manages traffic:",
-    ["Hybrid (Routing + Webster Signal Control)", "Dynamic Routing Only", "Webster Signal Control Only", "None (Original City State)"]
+    ["Hybrid (Routing + Webster Signal Control)", "None (Original City State)"]
 )
 
 st.sidebar.divider()
@@ -85,6 +85,8 @@ global_emission_cap = st.sidebar.slider(
     step=10,
     help=f"The lowest possible cap is {min_cap_possible}kg. Below this, physics prevents further reduction because traffic has to go *somewhere*!"
 )
+st.sidebar.latex(r"\min(\max E_i) = \frac{\sum_{i=1}^{N} E_i}{N} = \bar{E}")
+st.sidebar.caption("The absolute minimum limit is the mathematical mean. If you spread all city traffic perfectly equally, no intersection can emit less than the city average.")
 traditional_efficiency = st.sidebar.slider("Traditional Optimization (Max Throughput)", 0, 100, 0, step=10)
 
 st.sidebar.divider()
