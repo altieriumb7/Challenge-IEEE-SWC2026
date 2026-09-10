@@ -1,0 +1,155 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <title>FairMobility Pitch</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reset.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/night.min.css" id="theme">
+        <style>
+            .reveal h2 { color: #00ffcc; text-transform: none; }
+            .reveal h3 { color: #ffffff; font-size: 1.2em; }
+            .reveal p, .reveal li { font-size: 0.8em; line-height: 1.4; text-align: left; }
+            .speaker-notes { color: #aaaaaa; font-size: 0.55em; margin-top: 50px; font-style: italic; border-top: 1px solid #444; padding-top: 15px; text-align: left;}
+            .highlight { color: #ff5555; font-weight: bold; }
+        </style>
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <!-- Slide 1 -->
+                <section>
+                    <h2>FairMobility</h2>
+                    <h3 style="margin-top: 30px;">An AI-Driven Digital Twin for Urban Equity</h3>
+                    <p style="text-align: center;">Optimizing the Pareto Frontier between Traffic Delay and Urban Pollution.</p>
+                    <div class="speaker-notes">
+                        <strong>Speech:</strong> "Good morning. When we talk about smart cities, we usually face a false dichotomy: we either paralyze the city to save the environment, or we sacrifice the air quality of vulnerable neighborhoods to keep cars moving. Today, we present FairMobility, a Digital Twin designed to break this compromise."
+                    </div>
+                </section>
+                
+                <!-- Slide 2 -->
+                <section>
+                    <h2>The Problem: Algorithmic Bias</h2>
+                    <ul style="margin-top: 40px;">
+                        <li>Standard algorithms maximize throughput on wide roads.</li>
+                        <li style="margin-top: 20px;"><strong>The Data Truth:</strong> Our dataset averages 250 kg of CO2/node. Traditional routing creates <span class="highlight">monster intersections peaking at 10,000 kg/hour</span> near schools.</li>
+                        <li style="margin-top: 20px;"><strong>The Result:</strong> Trading respiratory health for a few seconds of saved commute time.</li>
+                    </ul>
+                    <div class="speaker-notes">
+                        <strong>Speech:</strong> "We analyzed the dataset and found a harsh truth: Traditional Optimization is inherently biased. It funnels heavy vehicles into massive bottlenecks, creating peaks of nearly 10,000 kg of smog per hour right next to schools. We are trading public health for global throughput."
+                    </div>
+                </section>
+
+                <!-- Slide 3 -->
+                <section>
+                    <h2>The Simulation Engine</h2>
+                    <h3>Hybrid Physics</h3>
+                    <ul style="margin-top: 40px;">
+                        <li><strong>Fluid Dynamics (Routing):</strong> Spatially diffuses traffic away from schools based on neighborhood lane capacity.</li>
+                        <li style="margin-top: 20px;"><strong>Webster HCM Control:</strong> Instantly calculates the mathematical traffic light cycle to absorb diverted traffic.</li>
+                    </ul>
+                    <div class="speaker-notes">
+                        <strong>Speech:</strong> "The first half is a Fluid Dynamic Router that actively diffuses trucks away from schools. But routing alone creates gridlock. So, the second half uses the Highway Capacity Manual. The moment cars are diverted, the Digital Twin recalculates the optimal Webster Traffic Light Cycle for the receiving intersections to absorb the shock."
+                    </div>
+                </section>
+
+                <!-- Slide 3.5: Mathematical Engine -->
+                <section>
+                    <h2>The Mathematical Engine</h2>
+                    <h3 style="margin-top: 10px;">Governing Equations</h3>
+                    
+                    <div style="font-size: 0.7em; text-align: left; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; margin-top: 20px;">
+                        <p style="color: #00ffcc; font-weight: bold; margin-bottom: 5px;">1. Local Control: Webster HCM Uniform Delay</p>
+                        <p>$$ d_{uniform} = \frac{C(1-\lambda)^2}{2(1-\min(\lambda x, 0.99))} $$</p>
+                        <p style="font-size: 0.7em; color: #aaa;">Where $x = q / (\lambda \cdot S)$ is the Volume-to-Capacity ratio.</p>
+                    </div>
+
+                    <div style="font-size: 0.7em; text-align: left; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; margin-top: 15px;">
+                        <p style="color: #00ffcc; font-weight: bold; margin-bottom: 5px;">2. Spatial Diffusion: Water-filling Routing</p>
+                        <p>$$ \Delta v_i = - \phi \cdot (v_i - \bar{v}_{neighbors}) \cdot \frac{lanes_n}{\sum lanes_{neighbors}} $$</p>
+                        <p style="font-size: 0.7em; color: #aaa;">Distributes excess traffic $v_i$ proportionally to neighboring lane capacity.</p>
+                    </div>
+
+                    <div style="font-size: 0.7em; text-align: left; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; margin-top: 15px;">
+                        <p style="color: #00ffcc; font-weight: bold; margin-bottom: 5px;">3. AI Optimization: Continuous Reward Function</p>
+                        <p>$$ R = - \alpha (\max E_{vuln}) - \beta (\sum E_{total}) - \gamma (\bar{W}_{global}) - \delta (\max W_{city}) $$</p>
+                        <p style="font-size: 0.7em; color: #aaa;">The PPO Agent maximizes $R$ to find the Pareto optimal point between Emissions ($E$) and Wait times ($W$).</p>
+                    </div>
+                    
+                    <div class="speaker-notes" style="margin-top: 10px;">
+                        <strong>Speech:</strong> "For the technical jury, here is the math driving the Digital Twin. We use the Highway Capacity Manual formula to calculate non-linear delay based on the Volume-to-Capacity ratio. Our dynamic router diffuses traffic using a water-filling equation weighted by lane capacity. Finally, the Reinforcement Learning agent optimizes a continuous reward function, maximizing a multi-objective surface that penalizes peak emissions near schools and global wait times simultaneously."
+                    </div>
+                </section>
+
+                <!-- Slide 4 -->
+                <section>
+                    <h2>The 3 Goals vs The Trade-off</h2>
+                    <ul style="margin-top: 40px;">
+                        <li>🌿 <strong>Environmental Justice</strong> (Protecting Schools)</li>
+                        <li>🚌 <strong>Modal Equality</strong> (Prioritizing Buses)</li>
+                        <li>🗺️ <strong>Spatial Equity</strong> (Balancing Space)</li>
+                    </ul>
+                    <p class="highlight" style="margin-top: 40px; text-align: center;">The Braess Paradox: Fairness has a mathematical cost.</p>
+                    <div class="speaker-notes">
+                        <strong>Speech:</strong> "Our dashboard gives the Mayor three tools. But here we encounter the Braess Paradox. If you manually divert trucks from a highway to a side street to protect a school, the global wait time of the city mathematically worsens. Manual human tuning is not enough."
+                    </div>
+                </section>
+
+                <!-- Slide 5 -->
+                <section>
+                    <h2>Continuous Optimization</h2>
+                    <h3>The Ultimate Goal</h3>
+                    <ul style="margin-top: 40px;">
+                        <li><strong>Objective 1:</strong> Crush global delay (Strictly keep commutes under 50 minutes).</li>
+                        <li style="margin-top: 20px;"><strong>Objective 2:</strong> Crush total urban pollution (Minimize the absolute kg of CO2).</li>
+                        <li style="margin-top: 20px;"><strong>The Challenge:</strong> Achieving absolute efficiency without hardcoded panic thresholds.</li>
+                    </ul>
+                    <div class="speaker-notes">
+                        <strong>Speech:</strong> "Our ultimate goal became clear: optimize the absolute maximum for delay—ensuring no commuter waits more than 50 minutes—while continuously pushing total pollution to the lowest physical limit possible, without setting artificial walls that break the system."
+                    </div>
+                </section>
+
+                <!-- Slide 6 -->
+                <section>
+                    <h2>The Automation</h2>
+                    <h3>Reinforcement Learning AI</h3>
+                    <ul style="margin-top: 40px;">
+                        <li><strong>Algorithm:</strong> Proximal Policy Optimization (PPO).</li>
+                        <li style="margin-top: 20px;"><strong>Training:</strong> Episodic sampling over historical scenarios.</li>
+                        <li style="margin-top: 20px;"><strong>The Brain:</strong> Constantly adjusts the 3 Fairness Goals to find the absolute mathematical minimum in delay and pollution.</li>
+                    </ul>
+                    <div class="speaker-notes">
+                        <strong>Speech:</strong> "So, we handed the keys to AI. We put a Deep Reinforcement Learning Agent in a continuous mathematical press. We trained it on historical hours, penalizing it heavily for any delay over 50 minutes and applying constant pressure to reduce total kg of pollution. It learned to dynamically balance the 3 equity goals to survive."
+                    </div>
+                </section>
+
+                <!-- Slide 7 -->
+                <section>
+                    <h2>Results & Conclusion</h2>
+                    <ul style="margin-top: 40px;">
+                        <li>The AI acts as a real-time Autonomous Mayor.</li>
+                        <li style="margin-top: 20px;">Proven mathematical reduction in total delay and total kg of pollution.</li>
+                        <li style="margin-top: 20px;">Achieving Northern European efficiency standards equitably.</li>
+                    </ul>
+                    <h3 style="color: #00ffcc; margin-top: 60px;">FairMobility: Engineering Efficiency & Health.</h3>
+                    <div class="speaker-notes">
+                        <strong>Speech:</strong> "The AI learned to act as an autonomous traffic director, finding the perfect Pareto balance. With FairMobility, we proved that by combining civil engineering physics with Reinforcement Learning, cities don't have to choose between keeping traffic moving and keeping their citizens breathing. We can engineer both. Thank you."
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+        <script>
+            Reveal.initialize({
+                hash: true,
+                controls: true,
+                progress: true,
+                center: true,
+                transition: 'slide'
+            });
+        </script>
+    </body>
+</html>

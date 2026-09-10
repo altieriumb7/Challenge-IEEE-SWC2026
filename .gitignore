@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+gnn_temp/
+.streamlit/
+test_load.py
+test_manual_load.py

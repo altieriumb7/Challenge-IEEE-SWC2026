@@ -1,0 +1,162 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <title>Technical Architecture: FairMobility</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reset.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/night.min.css">
+        <style>
+            .reveal h2 { color: #00ffcc; text-transform: none; font-size: 1.6em; margin-bottom: 20px;}
+            .reveal h3 { color: #ffffff; font-size: 1.2em; margin-bottom: 20px; }
+            .reveal p, .reveal li { font-size: 0.9em; line-height: 1.4; text-align: left; }
+            .math-box { background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid #00ffcc; font-size: 1em;}
+            .example-box { background: rgba(40,40,60,0.5); padding: 15px; border-radius: 8px; border-left: 5px solid #ffaa00; font-size: 0.85em;}
+            .example-title { color: #ffaa00; font-weight: bold; margin-bottom: 8px; font-size: 1em;}
+            .speaker-notes { color: #aaaaaa; font-size: 0.55em; margin-top: 30px; font-style: italic; border-top: 1px solid #444; padding-top: 10px; text-align: left;}
+        </style>
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <!-- Slide 1 -->
+                <section>
+                    <h2>FairMobility</h2>
+                    <h3>Deep Dive: Technical & Mathematical Architecture</h3>
+                    <div style="text-align: center; margin-top: 60px; font-size: 1.3em; line-height: 2;">
+                        <p style="text-align: center;">1. Fluid Dynamic Spatial Routing</p>
+                        <p style="text-align: center;">2. Non-linear HCM Delay Calculation</p>
+                        <p style="text-align: center;">3. Continuous Reinforcement Learning (PPO)</p>
+                    </div>
+                </section>
+                
+                <!-- Slide 2: Delaunay Topology -->
+                <section>
+                    <h2>1. Graph Topology: Delaunay Triangulation</h2>
+                    <div class="math-box">
+                        <p><strong>Circumcircle Criterion:</strong></p>
+                        <p>\[ \forall \triangle ABC \in DT(P), \nexists D \in P \text{ inside the circumcircle of } \triangle ABC \]</p>
+                        <p style="font-size: 0.8em; color: #aaa;">Where \(P\) is the set of latitude/longitude coordinates for all intersections.</p>
+                    </div>
+                    <div class="example-box">
+                        <p class="example-title">Topological Application:</p>
+                        <p>To mathematically connect the CSV's isolated GPS coordinates into a realistic road network, we use Delaunay Triangulation. This specific algorithm maximizes the minimum angle of all triangles, preventing long, skinny (unrealistic) road connections. It perfectly reconstructs the planar mesh of the city's adjacency matrix in \(\mathcal{O}(V \log V)\) time, allowing the fluid dynamics to flow naturally between adjacent intersections.</p>
+                    </div>
+                </section>
+                
+                <!-- Slide 3: Webster HCM -->
+                <section>
+                    <h2>2. The Physics: Webster HCM & Dynamic Phasing</h2>
+                    <div class="math-box">
+                        <p>\[ d = \frac{C(1-\lambda)^2}{2(1-\min(\lambda x, 0.99))} + \begin{cases} 
+                        \frac{x^2}{2q_{sec}(1-x)} & x < 0.95 \\
+                        15 + 120(x - 0.95) & x \ge 0.95 
+                        \end{cases} \]</p>
+                        <p style="font-size: 0.8em; color: #aaa;">\(\lambda\) represents the Green Split (Directional Priority) dynamically assigned.</p>
+                    </div>
+                    <div class="example-box">
+                        <p class="example-title">Dynamic Direction Reversal:</p>
+                        <p>Traditional lights have fixed timers. Our Digital Twin features <strong>Dynamic Phasing</strong>: it actively changes the "direction" of the intersection's right-of-way by manipulating \(\lambda\) (the green time split) in real-time. If the AI routes a massive wave of trucks from the North, the equation dynamically stretches the North-South green cycle, effectively reversing the intersection's priority on the fly to absorb the shock.</p>
+                    </div>
+                </section>
+
+                <!-- Slide 4 -->
+                <section>
+                    <h2>3. The Routing: Spatial Water-filling</h2>
+                    <div class="math-box">
+                        <p>\[ \Delta v_i = - \phi \cdot (v_i - \bar{v}_{adj}) \cdot \frac{L_n}{\sum L_{adj}} \]</p>
+                        <p style="font-size: 0.8em; color: #aaa;">\(\phi\) is the routing coefficient. \(L_n\) represents the physical lanes of neighbor \(n\).</p>
+                    </div>
+                    <div class="example-box">
+                        <p class="example-title">Example Application:</p>
+                        <p>Node A has 1000 cars. Its neighbors (Node B: 4 lanes, Node C: 1 lane) average 500 cars. Node A needs to shed its excess. Because of the fractional multiplier \(L_n / \sum L_{adj}\), Node B will absorb 80% of the diverted cars, while the small 1-lane Node C will only absorb 20%. This prevents the algorithm from instantly causing gridlock in small alleys.</p>
+                    </div>
+                </section>
+
+                <!-- Slide 5 -->
+                <section>
+                    <h2>4. The AI Model: PPO Neural Network</h2>
+                    <div class="math-box">
+                        <p><strong>Algorithm:</strong> Proximal Policy Optimization (<code>stable-baselines3</code>)</p>
+                        <p><strong>Architecture:</strong> <code>MlpPolicy</code> Actor-Critic Network (Hidden Layers: [64, 64], Tanh)</p>
+                        <p><strong>Observation Space:</strong> \(O \in \mathbb{R}^4 \rightarrow [E_{vuln}, Var(W), \bar{W}_{bus}, \bar{W}_{glo}] \)</p>
+                        <p><strong>Action Space:</strong> \(A \in [0,1]^3\) (Continuous control of Routing sliders)</p>
+                    </div>
+                    <div class="example-box">
+                        <p class="example-title">Implementation Details:</p>
+                        <p>We trained the official OpenAI-standard PPO algorithm using the <code>stable-baselines3</code> framework. The <code>MlpPolicy</code> creates two separate neural networks (an Actor and a Critic), each with two hidden layers of 64 neurons. Every timestep, the 4-dimensional tensor flows through these dense layers, and the Actor outputs a deterministic 3-dimensional action tensor to tune the Water-filling coefficients in real-time.</p>
+                    </div>
+                </section>
+
+                <!-- Slide 6 -->
+                <section>
+                    <h2>5. Continuous Pareto Optimization</h2>
+                    <div class="math-box">
+                        <p>\[ \max_{\theta} \mathbb{E} \left[ - \alpha \max(E_{vuln}) - \beta \sum(E) - \gamma \bar{W}_{glo} - \delta \max(W) \right] \]</p>
+                        <p style="font-size: 0.8em; color: #aaa;">Where \(\theta\) are the network weights. Penalties scale continuously.</p>
+                    </div>
+                    <div class="example-box">
+                        <p class="example-title">Example Application:</p>
+                        <p>If the AI tries to minimize total pollution \(\sum(E)\) by forcing all cars onto a single road, the term \(\delta \max(W)\) will spike (e.g. 60 minute wait time), resulting in a massive negative reward. The gradient descent forces the neural network to find the mathematical Pareto equilibrium between the two conflicting curves: delay and emissions.</p>
+                    </div>
+                </section>
+                <!-- Slide 7: Computational Complexity -->
+                <section>
+                    <h2>6. Computational Complexity</h2>
+                    <h3 style="margin-top: 10px;">Day-use Scalability of the Digital Twin</h3>
+                    
+                    <div style="font-size: 0.7em; text-align: left; background: rgba(0,0,0,0.3); padding: 25px; border-radius: 12px; margin-top: 20px;">
+                        <ul style="line-height: 2;">
+                            <li><strong>Spatial Routing (Fluid Dynamics):</strong> \(\mathcal{O}(k \cdot V)\) where \(V\) is intersections and \(k\) is iterations (water-filling passes). Since the graph is planar, edges \(E \approx 3V\).</li>
+                            <li><strong>Webster HCM Calculation:</strong> \(\mathcal{O}(V)\) as delay is computed independently per node.</li>
+                            <li><strong>AI Inference (PPO Actor Network):</strong> \(\mathcal{O}(W)\) where \(W\) is the fixed number of weights in the neural network (~5,000 parameters). This is an \(\mathcal{O}(1)\) constant time operation per timestep.</li>
+                        </ul>
+                    </div>
+
+                    <div class="example-box" style="margin-top: 20px;">
+                        <p class="example-title">Overall Pipeline Complexity: \(\mathcal{O}(V)\) Linear Time</p>
+                        <p>Because the complexity scales linearly with the number of nodes rather than exponentially, the Digital Twin can be deployed on standard municipal hardware (without GPUs) and calculate the entire city's traffic state and AI optimal policy in under a millisecond per step.</p>
+                    </div>
+                    
+                    <div class="speaker-notes" style="margin-top: 10px;">
+                        <strong>Speech:</strong> "A model is useless if it can't run in real-time. What is the day-use complexity of our pipeline? The routing is linear relative to the intersections. The HCM calculation is linear. And the AI inference is a constant time operation, just a simple forward pass through a lightweight neural network. The entire pipeline scales in Big-O of V (Linear Time). You don't need a supercomputer to run this; the day-use Digital Twin runs locally on standard municipal hardware in milliseconds."
+                    </div>
+                </section>
+                
+                <!-- Slide 8 -->
+                <section>
+                    <h2>Results & Conclusion</h2>
+                    <ul style="margin-top: 40px; font-size: 1.1em; line-height: 2;">
+                        <li>The AI acts as a real-time Autonomous Mayor, executing in \(\mathcal{O}(V)\).</li>
+                        <li>Proven mathematical reduction in total delay and total kg of pollution.</li>
+                        <li>Achieving Northern European efficiency standards equitably.</li>
+                    </ul>
+                    <h3 style="color: #00ffcc; margin-top: 60px; font-size: 1.8em;">FairMobility: Engineering Efficiency & Health.</h3>
+                </section>
+            </div>
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/math/math.min.js"></script>
+        <script>
+            Reveal.initialize({
+                hash: true,
+                controls: true,
+                progress: true,
+                center: true,
+                transition: 'slide',
+                width: 1280,
+                height: 720,
+                margin: 0.05,
+                minScale: 0.2,
+                maxScale: 2.0,
+                plugins: [ RevealMath.MathJax2 ],
+                math: {
+                    mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js',
+                    config: 'TeX-AMS_HTML-full'
+                }
+            });
+        </script>
+    </body>
+</html>
